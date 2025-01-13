@@ -1,68 +1,72 @@
 #include<bits/stdc++.h>
+#define ll long long int
 #define endl '\n'
-#define ll long long
-#include<string.h>
-#include<string>
 using namespace std;
-
-bool check(vector<int> ar, int k, int n) 
+void solve()
 {
-    sort(ar.begin(),ar.end());
-
-    int index = 0;
-    for (int i = 1; i <= k; i++) 
+    int n;
+    cin >> n;
+    multiset<int> ml;
+    for(int i=0;i<n;i++)
     {
-        bool removed = false;
-
-        for (int j = 0; j < ar.size(); j++) 
+        int x;
+        cin >> x;
+        ml.insert(x);
+    }
+    auto check=[&](int k)
+    {
+        multiset<int> x;
+        x = ml;
+        for(int i=1;i<=k;i++)
         {
-            if (ar[j] <= (k - i + 1)) 
+            if(x.empty()) return false;
+            int target = k-i+1;
+            auto it = x.upper_bound(target);
+            if(it==x.begin())
             {
-                ar.erase(ar.begin() + j);
-                removed = true;
-                break;
+                return false;
+            }
+            else
+            {
+                --it;
+                x.erase(it);
+
+            }
+            if(!x.empty())
+            {
+                auto it=x.begin();
+                int val=*it;
+                x.erase(it);
+                x.insert(val+target);
             }
         }
-        if (!removed) return false;
+        return true;
+    };
 
-        if (!ar.empty()) ar.back() += (k - i + 1);
+    int l=0,r=101,mid,ans;
+    while(l<=r)
+    {
+        mid=l+(r-l)/2;
+        if(check(mid))
+        {
+            ans = mid;
+            l = mid+1;
+        }
+        else r = mid-1;
     }
-    return true;
-}
 
+    cout << ans << endl;
+}
 int main()
 {
     ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
+    cin.tie(0);
+    cout.tie(0);
     int t;
-    cin >> t;
+    cin>>t;
     while(t--)
     {
-        int n;
-        cin >> n;
-        vector<int> ar(n);
-        for (int i = 0; i < n; i++) cin >> ar[i];
-        sort(ar.begin(),ar.end());
-
-        int l = 1, r = 101, ans = 0;
-
-        while (l <= r) 
-        {
-            int mid = l + (r - l) / 2;
-
-            if (check(ar, mid, n)) 
-            {
-                ans = mid;
-                l = mid + 1;
-            } 
-            else 
-            {
-                r = mid - 1;
-            }
-        }
-        cout << ans << endl;
+       solve();
     }
-
     return 0;
 }
